@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Pro1.Models.Ticket>
+
+@{
+    ViewData["Title"] = "My Tickets";
+}
+
+<h2>My Tickets</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <p>You have no tickets assigned.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(m => m.Brand)</th>
+                <th>@Html.DisplayNameFor(m => m.Model)</th>
+                <th>@Html.DisplayNameFor(m => m.Registration)</th>
+                <th>@Html.DisplayNameFor(m => m.State)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(m => ticket.Brand)</td>
+                    <td>@Html.DisplayFor(m => ticket.Model)</td>
+                    <td>@Html.DisplayFor(m => ticket.Registration)</td>
+                    <td>@Html.DisplayFor(m => ticket.State)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Pro1.Models.Ticket>
+
+@{
+    ViewData["Title"] = "Get Ticket";
+}
+
+<h2>Available Tickets</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No tickets available to claim.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(m => m.Brand)</th>
+                <th>@Html.DisplayNameFor(m => m.Model)</th>
+                <th>@Html.DisplayNameFor(m => m.Registration)</th>
+                <th>Action</th> <!-- Action column for claiming the ticket -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(m => ticket.Brand)</td>
+                    <td>@Html.DisplayFor(m => ticket.Model)</td>
+                    <td>@Html.DisplayFor(m => ticket.Registration)</td>
+                    <td>
+                        <form asp-action="ClaimTicket" asp-controller="Tickets" method="post">
+                            <input type="hidden" name="ticketId" value="@ticket.Id" /> <!-- Hidden field for ticketId -->
+                            <button type="submit" class="btn btn-primary">Claim</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
