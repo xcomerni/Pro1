@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -220,5 +221,48 @@ namespace Pro1.Controllers
 
             return RedirectToAction("GetTicket"); // Redirect back to the view
         }
-    }
+
+		// GET: Tickets/AddHour/5
+		public async Task<IActionResult> AddHour(int? id)
+		{
+			if (id == null)
+			{
+				return NotFound(); // If id is null, return 404
+			}
+
+			var ticket = await _context.Ticket.FindAsync(id);
+			if (ticket == null)
+			{
+				return NotFound(); // If ticket not found, return 404
+			}
+
+			// Ensure user owns the ticket
+			var loggedInUser = HttpContext.Session.GetString("LoggedInUser");
+			var userLogin = await _context.Login.FirstOrDefaultAsync(l => l.Username == loggedInUser);
+
+			if (userLogin?.EmployeeId != ticket.EmployeeId)
+			{
+				return Forbid(); // If user doesn't own the ticket, return 403
+			}
+
+			// Return a view with a form for setting the date and hour
+			return View(new Callendar { TicketId = ticket.Id, EmployeeId = userLogin.EmployeeId });
+		}
+
+		// POST: Tickets/AddHour
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddHour([Bind("Date,Hour,TicketId,EmployeeId")] Callendar callendar)
+		{
+			if (ModelState.IsValid)
+			{
+				_context.Callendar.Add(callendar); // Add to Callendar
+				await _context.SaveChangesAsync(); // Save changes
+				return RedirectToAction("MyTickets"); // Redirect back to MyTickets
+			}
+
+			// If ModelState isn't valid, re-render the view with errors
+			return View(callendar);
+		}
+	}
 }
