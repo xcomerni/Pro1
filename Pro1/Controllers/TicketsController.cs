@@ -35,13 +35,21 @@ namespace Pro1.Controllers
             }
 
             var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(t => t.Id == id);
+
             if (ticket == null)
             {
-                return NotFound();
+                return NotFound(); // If the ticket doesn't exist
             }
 
-            return View(ticket);
+            var parts = await _context.Parts
+                .Where(p => p.TicketId == id)
+                .ToListAsync();
+            
+
+            ViewBag.Parts = parts; // Ensure this is a list of Parts
+
+            return View(ticket); // Pass the ticket and parts to the view
         }
 
         // GET: Tickets/Create
