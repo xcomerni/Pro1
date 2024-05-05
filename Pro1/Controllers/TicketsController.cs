@@ -87,7 +87,7 @@ namespace Pro1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Model,Registration,Description,EmployeeId,EstimateDescription,EstimatePrice")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Model,Registration,Description,EmployeeId,EstimateDescription,EstimatePrice,IsAccepted,PricePaid,State")] Ticket ticket)
         {
             if (id != ticket.Id)
             {
@@ -156,35 +156,40 @@ namespace Pro1.Controllers
         }
 
         // Action to show all tickets for the logged-in user
-        public async Task<IActionResult> MyTickets()
+     public async Task<IActionResult> MyTickets()
+    {
+        var loggedInUser = HttpContext.Session.GetString("LoggedInUser");
+
+        if (string.IsNullOrEmpty(loggedInUser))
         {
-            var loggedInUser = HttpContext.Session.GetString("LoggedInUser");
-
-            if (string.IsNullOrEmpty(loggedInUser))
-            {
-                // If no user is logged in, redirect to login
-                return RedirectToAction("Index", "Login");
-            }
-
-            // Retrieve the EmployeeId associated with the logged-in user
-            var userLogin = await _context.Login
-                .FirstOrDefaultAsync(l => l.Username == loggedInUser);
-
-            if (userLogin == null)
-            {
-                return RedirectToAction("Index", "Login");
-            }
-
-            // Get all tickets belonging to the current logged-in user's EmployeeId
-            var userTickets = await _context.Ticket
-                .Where(t => t.EmployeeId == userLogin.EmployeeId)
-                .ToListAsync();
-
-            return View(userTickets); // Pass the tickets to the view
+            return RedirectToAction("Index", "Login"); // Redirect to login if not logged in
         }
+
+        // Get the EmployeeId associated with the logged-in user
+        var userLogin = await _context.Login
+            .FirstOrDefaultAsync(l => l.Username == loggedInUser);
+
+        if (userLogin == null)
+        {
+            return RedirectToAction("Index", "Login"); // Redirect if no valid user is found
+        }
+
+        // Retrieve all tickets for the current user
+        var userTickets = await _context.Ticket
+            .Where(t => t.EmployeeId == userLogin.EmployeeId) // Get only the tickets for this user
+            .ToListAsync();
+
+        return View(userTickets); // Pass the list of tickets to the view
+    }
 
         public async Task<IActionResult> GetTicket()
         {
+            var loggedInUser = HttpContext.Session.GetString("LoggedInUser");
+            if (string.IsNullOrEmpty(loggedInUser))
+            {
+                return RedirectToAction("Index", "Login"); // Redirect to login if not logged in
+            }
+
             var unassignedTickets = await _context.Ticket
                 .Where(t => t.EmployeeId == null) // Get tickets without an EmployeeId
                 .ToListAsync();
@@ -222,47 +227,59 @@ namespace Pro1.Controllers
             return RedirectToAction("GetTicket"); // Redirect back to the view
         }
 
-		// GET: Tickets/AddHour/5
-		public async Task<IActionResult> AddHour(int? id)
-		{
-			if (id == null)
-			{
-				return NotFound(); // If id is null, return 404
-			}
+        // GET: Tickets/AddHour/5
+        public async Task<IActionResult> AddHour(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound(); // If no ticket ID is provided, return 404
+            }
 
-			var ticket = await _context.Ticket.FindAsync(id);
-			if (ticket == null)
-			{
-				return NotFound(); // If ticket not found, return 404
-			}
+            var ticket = await _context.Ticket.FindAsync(id);
+            if (ticket == null)
+            {
+                return NotFound(); // If the ticket doesn't exist, return 404
+            }
 
-			// Ensure user owns the ticket
-			var loggedInUser = HttpContext.Session.GetString("LoggedInUser");
-			var userLogin = await _context.Login.FirstOrDefaultAsync(l => l.Username == loggedInUser);
+            var loggedInUser = HttpContext.Session.GetString("LoggedInUser");
+            var userLogin = await _context.Login.FirstOrDefaultAsync(l => l.Username == loggedInUser);
 
-			if (userLogin?.EmployeeId != ticket.EmployeeId)
-			{
-				return Forbid(); // If user doesn't own the ticket, return 403
-			}
+            if (userLogin == null || userLogin.EmployeeId != ticket.EmployeeId)
+            {
+                return Forbid(); // User isn't the owner of the ticket
+            }
 
-			// Return a view with a form for setting the date and hour
-			return View(new Callendar { TicketId = ticket.Id, EmployeeId = userLogin.EmployeeId });
-		}
+            // Return a view for adding the date and hour
+            return View(new Callendar { TicketId = ticket.Id, EmployeeId = userLogin.EmployeeId });
+        }
 
-		// POST: Tickets/AddHour
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> AddHour([Bind("Date,Hour,TicketId,EmployeeId")] Callendar callendar)
-		{
-			if (ModelState.IsValid)
-			{
-				_context.Callendar.Add(callendar); // Add to Callendar
-				await _context.SaveChangesAsync(); // Save changes
-				return RedirectToAction("MyTickets"); // Redirect back to MyTickets
-			}
+        // POST: Tickets/AddHour
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddHour([Bind("Date,Hour,TicketId,EmployeeId")] Callendar callendar)
+        {
+            if (ModelState.IsValid)
+            {
+                // Check if there's a conflict with the given date, hour, and employee
+                var conflictExists = await _context.Callendar
+                    .AnyAsync(c =>
+                        c.Date == callendar.Date &&
+                        c.Hour == callendar.Hour &&
+                        c.EmployeeId == callendar.EmployeeId
+                    );
 
-			// If ModelState isn't valid, re-render the view with errors
-			return View(callendar);
-		}
-	}
+                if (conflictExists)
+                {
+                    ModelState.AddModelError("", "There is already a booking at this time."); // Add error if conflict
+                    return View(callendar); // Return to the form with the error message
+                }
+
+                _context.Callendar.Add(callendar); // Add to the callendar
+                await _context.SaveChangesAsync(); // Save changes
+                return RedirectToAction("MyTickets"); // Redirect back to MyTickets
+            }
+
+            return View(callendar); // If model state isn't valid, re-render with errors
+        }
+    }
 }

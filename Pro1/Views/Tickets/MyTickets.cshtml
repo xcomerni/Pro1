@@ -15,20 +15,23 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>@Html.DisplayNameFor(m => m.Brand)</th>
-                <th>@Html.DisplayNameFor(m => m.Model)</th>
-                <th>@Html.DisplayNameFor(m => m.Registration)</th>
-                <th>@Html.DisplayNameFor(m => m.State)</th>
+                <th>@Html.DisplayNameFor(m => m.Description)</th>
+                <th>@Html.DisplayNameFor(m => m.EstimateDescription)</th>
+                <th>@Html.DisplayNameFor(m => m.EstimatePrice)</th>
+                <th>@Html.DisplayNameFor(m => m.IsAccepted)</th>
+                <th>@Html.DisplayNameFor(m => m.PricePaid)</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var ticket in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(m => ticket.Brand)</td>
-                    <td>@Html.DisplayFor(m => ticket.Model)</td>
-                    <td>@Html.DisplayFor(m => ticket.Registration)</td>
-                    <td>@Html.DisplayFor(m => ticket.State)</td>
+                    <td>@Html.DisplayFor(m => ticket.Description)</td>
+                    <td>@Html.DisplayFor(m => ticket.EstimateDescription)</td>
+                    <td>@Html.DisplayFor(m => ticket.EstimatePrice)</td>
+                    <td>@Html.DisplayFor(m => ticket.IsAccepted)</td>
+                    <td>@Html.DisplayFor(m => ticket.PricePaid)</td>
                     <td>
                         <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-primary">Edit</a>
 						<a asp-action="AddHour" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-secondary">Add Hour</a>

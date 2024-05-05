@@ -13,6 +13,8 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="EmployeeId" />
+            <input type="hidden" asp-for="State" />
             <div class="form-group">
                 <label asp-for="Brand" class="control-label"></label>
                 <input asp-for="Brand" class="form-control" />
@@ -34,19 +36,25 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EmployeeId" class="control-label"></label>
-                <input asp-for="EmployeeId" class="form-control" />
-                <span asp-validation-for="EmployeeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="EstimateDescription" class="control-label"></label>
                 <input asp-for="EstimateDescription" class="form-control" />
                 <span asp-validation-for="EstimateDescription" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EstimatePrice" class="control-label"></label>
-                <input asp-for="EstimatePrice" class="form-control" />
+                <input asp-for="EstimatePrice" type="number" step="0.01" class="form-control" />
                 <span asp-validation-for="EstimatePrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IsAccepted">Is Accepted?</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" asp-for="IsAccepted" />
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="PricePaid"></label>
+                <input asp-for="PricePaid" type="number" step="0.01" class="form-control" /> <!-- Decimal input for PricePaid -->
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

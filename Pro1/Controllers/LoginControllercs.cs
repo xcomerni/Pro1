@@ -34,6 +34,7 @@ namespace Pro1.Controllers
                 if (user != null)
                 {
                     HttpContext.Session.SetString("LoggedInUser", user.Username);
+                    HttpContext.Session.SetInt32("IsAdmin", user.IsAdmin ? 1 : 0);
 
                     if (user.IsAdmin)
                     {

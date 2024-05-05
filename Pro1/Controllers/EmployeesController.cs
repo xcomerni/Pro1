@@ -58,25 +58,32 @@ namespace Pro1.Controllers
         {
             if (ModelState.IsValid)
             {
-                // First, save the employee to get its generated Id
                 _context.Employee.Add(employee);
-                await _context.SaveChangesAsync(); // Ensure the Employee record is saved
+                await _context.SaveChangesAsync(); // Save the new employee
 
-                // Now create the login with the correct EmployeeId
-                var login = new Login
+                // Generate username and password
+                var username = employee.Name;
+                var password = $"{employee.Name}{employee.Id}";
+
+                // Create login for the new employee
+                var newLogin = new Login
                 {
-                    Username = employee.Name,
-                    Password = $"{employee.Name}{employee.Id}",
-                    EmployeeId = employee.Id // Referencing the correct EmployeeId
+                    Username = username,
+                    Password = password,
+                    EmployeeId = employee.Id
                 };
 
-                _context.Login.Add(login); // Add the login
-                await _context.SaveChangesAsync(); // Save changes to database
+                _context.Login.Add(newLogin);
+                await _context.SaveChangesAsync(); // Save the login
 
-                return RedirectToAction(nameof(Index));
+                // Set TempData with the message to show on Index
+                TempData["UserCredentials"] = $"Employee created! Username: {username}, Password: {password}";
+
+                // Redirect back to Index
+                return RedirectToAction("Index");
             }
 
-            return View(employee);
+            return View(employee); // If ModelState isn't valid, re-render the create view
         }
 
         // GET: Employees/Edit/5

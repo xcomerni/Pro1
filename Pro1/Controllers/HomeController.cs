@@ -15,6 +15,8 @@ namespace Pro1.Controllers
 
         public IActionResult Index()
         {
+            HttpContext.Session.SetString("LoggedInUser", null);
+            HttpContext.Session.SetInt32("IsAdmin", 0);
             return View();
         }
 

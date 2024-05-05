@@ -18,13 +18,11 @@ namespace Pro1.Models
         public string Description { get; set; }
         [ForeignKey("Employee")]
         public int? EmployeeId { get; set; }
-        public string State = "created";
+        public string State { get; set; }
         public string? EstimateDescription { get; set; }
         public decimal? EstimatePrice { get; set;}
-        public bool IsAccepted = false;
-        public decimal PricePaid = 0;
-
-
+        public bool IsAccepted { get; set; }
+        public decimal PricePaid { get; set; }
 
     }
 }
