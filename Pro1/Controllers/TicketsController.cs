@@ -112,7 +112,7 @@ namespace Pro1.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyTickets));
             }
             return View(ticket);
         }
