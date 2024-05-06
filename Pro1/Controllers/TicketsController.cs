@@ -67,6 +67,9 @@ namespace Pro1.Controllers
         {
             if (ModelState.IsValid)
             {
+                ticket.State = "created";
+                ticket.IsAccepted = false;
+                ticket.PricePaid = 0;
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
