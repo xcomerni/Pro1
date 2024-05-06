@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro1.Data;
 
@@ -11,9 +12,11 @@ using Pro1.Data;
 namespace Pro1.Migrations
 {
     [DbContext(typeof(Pro1Context))]
-    partial class Pro1ContextModelSnapshot : ModelSnapshot
+    [Migration("20240506081220_parts-foreign-key")]
+    partial class partsforeignkey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,6 +120,8 @@ namespace Pro1.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TicketId");
+
                     b.ToTable("Parts");
                 });
 
@@ -166,6 +171,17 @@ namespace Pro1.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Ticket");
+                });
+
+            modelBuilder.Entity("Pro1.Models.Parts", b =>
+                {
+                    b.HasOne("Pro1.Models.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
                 });
 #pragma warning restore 612, 618
         }

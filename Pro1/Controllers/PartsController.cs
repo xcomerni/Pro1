@@ -1,36 +1,46 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Pro1.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Pro1.Data;
+using Pro1.Models;
 
-public class PartsController : Controller
+namespace Pro1.Controllers
 {
-    private readonly Pro1Context _context;
-
-    public PartsController(Pro1Context context)
+    public class PartsController : Controller
     {
-        _context = context;
-    }
+        private readonly Pro1Context _context;
 
-    // GET: Parts/Create
-    public IActionResult Create(int ticketId)
-    {
-        var part = new Parts { TicketId = ticketId };
-        return View(part); // Pass the part model with the associated TicketId
-    }
-
-    // POST: Parts/Create
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Name,TicketId,unitPrice,amount")] Parts part)
-    {
-        if (ModelState.IsValid)
+        public PartsController(Pro1Context context)
         {
-            _context.Parts.Add(part); // Add the new part to the database
-            await _context.SaveChangesAsync(); // Save changes
-            return RedirectToAction("Details", "Tickets", new { id = part.TicketId }); // Redirect to the ticket details
+            _context = context;
         }
 
-        return View(part); // Re-render the view with validation errors if any
+        // GET: Parts/Create
+        public IActionResult Create(int ticketId)
+        {
+            var part = new Parts { TicketId = ticketId };
+            return View(part); // Pass the part model with the associated TicketId
+        }
+
+        // POST: Parts/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Name,TicketId,unitPrice,amount")] Parts part)
+        {
+
+            if (ModelState.IsValid)
+            {
+                _context.Parts.Add(part); // Add the new part to the database
+                await _context.SaveChangesAsync(); // Save changes
+                return RedirectToAction("Details", "Tickets", new { id = part.TicketId }); // Redirect to the ticket details
+            }
+
+            return View(part); // Re-render the view with validation errors if any
+        }
+
     }
 }

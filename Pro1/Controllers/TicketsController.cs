@@ -232,6 +232,7 @@ namespace Pro1.Controllers
             {
                 // Assign the ticket to the current user's EmployeeId
                 ticket.EmployeeId = userLogin.EmployeeId;
+                ticket.State = "in progress";
                 await _context.SaveChangesAsync();
             }
 

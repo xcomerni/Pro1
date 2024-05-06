@@ -20,7 +20,7 @@ namespace Pro1.Models
         public int? EmployeeId { get; set; }
         public string State { get; set; } = "created";
         public string? EstimateDescription { get; set; }
-        public decimal? EstimatePrice { get; set;}
+        public decimal EstimatePrice { get; set;} = decimal.Zero;
         public bool IsAccepted { get; set; } = false;
         public decimal PricePaid { get; set; } = decimal.Zero;
 
