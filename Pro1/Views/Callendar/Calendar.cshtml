@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Employee Calendar";
+}
+
+<h1>Employee Calendar</h1>
+
+<div id="calendar"></div> <!-- Container for FullCalendar -->
+<!-- Include FullCalendar Scripts and Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+@section Scripts
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var calendarEl = document.getElementById("calendar");
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: "timeGridWeek", // Configure initial view
+                events: "/Callendar/GetAllEvents", // Source of events
+                headerToolbar: {
+                    start: 'prev,next today', // Navigation buttons
+                    center: 'title', // Calendar title in the center
+                    end: 'dayGridMonth,timeGridWeek,timeGridDay' // View switching buttons
+                },
+                buttonText: {
+                    today: 'Today',
+                    month: 'Month',
+                    week: 'Week',
+                    day: 'Day'
+                },
+            });
+
+            calendar.render(); // Render the calendar
+        });
+    </script>
+}
