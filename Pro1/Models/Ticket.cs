@@ -16,6 +16,8 @@ namespace Pro1.Models
         public string Registration { get; set; }
         [Required]
         public string Description { get; set; }
+        [Required]
+        public int TimeSlots { get; set; }
         [ForeignKey("Employee")]
         public int? EmployeeId { get; set; }
         public string State { get; set; } = "created";

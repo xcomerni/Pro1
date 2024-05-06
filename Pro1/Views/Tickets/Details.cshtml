@@ -52,28 +52,6 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.EstimatePrice)
         </dd>
-@*         <dt class="col-sm-2">Parts</dt>
-        <dd class="col-sm-10">
-            @{
-                var parts = ViewBag.Parts as List<Pro1.Models.Parts>; // Explicitly cast to List<Parts>
-            }
-
-            @if (parts == null || !parts.Any()) 
-            {
-                <p>No parts added to this ticket.</p> <!-- If no parts -->
-            }
-            else
-            {
-                <ul>
-                @foreach (var part in parts)
-                {
-                    <li>
-                        Part Name: @part.Name, Unit Price: @part.unitPrice, Amount: @part.amount
-                    </li>
-                }
-                </ul>
-            }
-        </dd> *@
         <dt class="col-sm-2">Parts</dt>
         <dd class="col-sm-10">
             @{
@@ -113,6 +91,5 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

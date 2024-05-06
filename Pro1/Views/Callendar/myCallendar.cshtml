@@ -16,7 +16,6 @@ else
         <thead>
             <tr>
                 <th>@Html.DisplayNameFor(m => m.Date)</th>
-                <th>@Html.DisplayNameFor(m => m.Hour)</th>
                 <th>@Html.DisplayNameFor(m => m.TicketId)</th>
             </tr>
         </thead>
@@ -25,8 +24,7 @@ else
             {
                 <tr>
                     <td>@Html.DisplayFor(m => callendar.Date)</td>
-                    <td>@Html.DisplayFor(m => callendar.Hour)</td>
-                    <td>@Html.DisplayFor(m => callendar.TicketId)</td> <!-- You could also include ticket details if needed -->
+                    <td>@Html.DisplayFor(m => callendar.TicketId)</td>
                 </tr>
             }
         </tbody>

@@ -34,7 +34,23 @@ namespace Pro1.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Parts.Add(part); // Add the new part to the database
+                // Calculate the overall cost of the part
+                var overallCost = part.unitPrice * part.amount;
+
+                // Find the ticket associated with the part
+                var ticket = await _context.Ticket.FindAsync(part.TicketId);
+
+                if (ticket == null)
+                {
+                    return NotFound(); // If the ticket doesn't exist, return 404
+                }
+
+                // Add the part's overall cost to the ticket's estimate price
+                ticket.EstimatePrice = (ticket.EstimatePrice) + overallCost;
+
+                // Add the new part and update the ticket
+                _context.Parts.Add(part); // Add the part to the database
+                _context.Update(ticket);
                 await _context.SaveChangesAsync(); // Save changes
                 return RedirectToAction("Details", "Tickets", new { id = part.TicketId }); // Redirect to the ticket details
             }

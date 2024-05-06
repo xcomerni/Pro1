@@ -6,6 +6,13 @@
 
 <h2>My Tickets</h2>
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 @if (Model == null || !Model.Any())
 {
     <p>You have no tickets assigned.</p>
