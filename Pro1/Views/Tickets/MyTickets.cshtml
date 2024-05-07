@@ -6,6 +6,13 @@
 
 <h2>My Tickets</h2>
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 @if (Model == null || !Model.Any())
 {
     <p>You have no tickets assigned.</p>
@@ -15,20 +22,15 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(m => m.Brand)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(m => m.Model)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(m => m.Registration)
-                </th>
+                <th>@Html.DisplayNameFor(m => m.Brand)</th>
+                <th>@Html.DisplayNameFor(m => m.Model)</th>
+                <th>@Html.DisplayNameFor(m => m.Registration)</th>
                 <th>@Html.DisplayNameFor(m => m.Description)</th>
                 <th>@Html.DisplayNameFor(m => m.EstimateDescription)</th>
                 <th>@Html.DisplayNameFor(m => m.EstimatePrice)</th>
                 <th>@Html.DisplayNameFor(m => m.IsAccepted)</th>
                 <th>@Html.DisplayNameFor(m => m.PricePaid)</th>
+                <th>@Html.DisplayNameFor(m => m.State)</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -36,18 +38,26 @@ else
             @foreach (var ticket in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(m => ticket.Brand)</td>
-                    <td>@Html.DisplayFor(m => ticket.Model)</td>
-                    <td>@Html.DisplayFor(m => ticket.Registration)</td>
+                    <td>
+                        @Html.DisplayFor(m => ticket.Brand)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => ticket.Model)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => ticket.Registration)
+                    </td>
                     <td>@Html.DisplayFor(m => ticket.Description)</td>
                     <td>@Html.DisplayFor(m => ticket.EstimateDescription)</td>
                     <td>@Html.DisplayFor(m => ticket.EstimatePrice)</td>
                     <td>@Html.DisplayFor(m => ticket.IsAccepted)</td>
                     <td>@Html.DisplayFor(m => ticket.PricePaid)</td>
+                    <td>@Html.DisplayFor(m => ticket.State)</td>
                     <td>
+                        <a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-secondary">Details</a>
                         <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-primary">Edit</a>
-                        <a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-primary">Details</a>
-						<a asp-action="AddHour" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-secondary">Add Hour</a>
+                        <a asp-action="AddHour" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-primary">Add Hour</a>
+                        <a asp-action="Create" asp-controller="Parts" asp-route-ticketId="@ticket.Id" class="btn btn-primary">Add Part</a>
 					</td>
                 </tr>
             }

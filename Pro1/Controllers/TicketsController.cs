@@ -35,13 +35,21 @@ namespace Pro1.Controllers
             }
 
             var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(t => t.Id == id);
+
             if (ticket == null)
             {
-                return NotFound();
+                return NotFound(); // If the ticket doesn't exist
             }
 
-            return View(ticket);
+            var parts = await _context.Parts
+                .Where(p => p.TicketId == id)
+                .ToListAsync();
+            
+
+            ViewBag.Parts = parts; // Ensure this is a list of Parts
+
+            return View(ticket); // Pass the ticket and parts to the view
         }
 
         // GET: Tickets/Create
@@ -55,10 +63,13 @@ namespace Pro1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Brand,Model,Registration,Description,EmployeeId,EstimateDescription,EstimatePrice")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id,Brand,Model,Registration,Description,TimeSlots,EmployeeId,EstimateDescription,EstimatePrice")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
+                ticket.State = "created";
+                ticket.IsAccepted = false;
+                ticket.PricePaid = 0;
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -87,7 +98,7 @@ namespace Pro1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Model,Registration,Description,EmployeeId,EstimateDescription,EstimatePrice,IsAccepted,PricePaid,State")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Model,Registration,Description,State,EmployeeId,EstimateDescription,EstimatePrice,IsAccepted,PricePaid,State")] Ticket ticket)
         {
             if (id != ticket.Id)
             {
@@ -221,6 +232,18 @@ namespace Pro1.Controllers
             {
                 // Assign the ticket to the current user's EmployeeId
                 ticket.EmployeeId = userLogin.EmployeeId;
+                ticket.State = "in progress";
+                var employee = await _context.Employee.FirstOrDefaultAsync(e => e.Id == userLogin.EmployeeId);
+
+                if (employee == null)
+                {
+                    return NotFound(); // If the employee doesn't exist, return 404
+                }
+
+                // Calculate the new estimate price
+                var newEstimatePrice = (ticket.TimeSlots) * employee.Rate; // Calculate the new estimate price
+                ticket.EstimatePrice = newEstimatePrice; // Update the estimate price
+
                 await _context.SaveChangesAsync();
             }
 
@@ -249,6 +272,16 @@ namespace Pro1.Controllers
                 return Forbid(); // User isn't the owner of the ticket
             }
 
+            // Count the total bookings for this ticket
+            var totalBookings = await _context.Callendar
+                .CountAsync(c => c.TicketId == id); // Count calendar entries for this ticket
+
+            // If the total bookings meet or exceed the ticket's TimeSlots, prevent additional bookings
+            if (totalBookings >= ticket.TimeSlots)
+            {
+                TempData["ErrorMessage"] = "This ticket has reached its maximum time slots."; // Set the error message
+                return RedirectToAction("MyTickets"); // Redirect to MyTickets
+            }
             // Return a view for adding the date and hour
             return View(new Callendar { TicketId = ticket.Id, EmployeeId = userLogin.EmployeeId });
         }
@@ -260,6 +293,16 @@ namespace Pro1.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Create the full booking time by adding the specified hour to the provided date
+                var bookingTime = callendar.Date.Date.AddHours(callendar.Hour); // Combine date with specific hour
+
+                // Check if the booking time is in the past
+                if (bookingTime < DateTime.Now)
+                {
+                    TempData["ErrorMessage"] = "Cannot book an hour in the past."; // Set error message
+                    return View(callendar); // Redirect with error
+                }
+                callendar.Date = bookingTime;
                 // Check if there's a conflict with the given date, hour, and employee
                 var conflictExists = await _context.Callendar
                     .AnyAsync(c =>

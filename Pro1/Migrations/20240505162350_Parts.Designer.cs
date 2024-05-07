@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pro1.Data;
 
@@ -11,9 +12,11 @@ using Pro1.Data;
 namespace Pro1.Migrations
 {
     [DbContext(typeof(Pro1Context))]
-    partial class Pro1ContextModelSnapshot : ModelSnapshot
+    [Migration("20240505162350_Parts")]
+    partial class Parts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,7 +145,7 @@ namespace Pro1.Migrations
                     b.Property<string>("EstimateDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("EstimatePrice")
+                    b.Property<decimal?>("EstimatePrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsAccepted")
@@ -162,9 +165,6 @@ namespace Pro1.Migrations
                     b.Property<string>("State")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TimeSlots")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

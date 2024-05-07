@@ -5,7 +5,13 @@
 }
 
 <h2>Add Hour to Ticket</h2>
-
+@if (TempData["ErrorMessage"] != null) // Check for error message in TempData
+{
+    <div class="alert alert-danger">
+        <!-- Display the error message -->
+        @TempData["ErrorMessage"]
+    </div>
+}
 <form asp-action="AddHour" method="post">
     <div asp-validation-summary="All" class="text-danger"></div> <!-- Display validation errors -->
     <div class="form-group">
