@@ -98,7 +98,7 @@ namespace Pro1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Model,Registration,Description,EmployeeId,EstimateDescription,EstimatePrice,IsAccepted,PricePaid,State")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Model,Registration,Description,State,EmployeeId,EstimateDescription,EstimatePrice,IsAccepted,PricePaid,State")] Ticket ticket)
         {
             if (id != ticket.Id)
             {
