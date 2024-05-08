@@ -9,17 +9,14 @@ namespace Pro1.Models
         public int Id { get; set; }
 
         [Required]
-        public DateTime Date { get; set; } // The date of the calendar event
-
-
-
+        public DateTime Date { get; set; } = DateTime.Today;// The date of the calendar event
         [Required]
         [ForeignKey("Employee")] // Reference to the Employee model
         public int EmployeeId { get; set; }
 
         [Required]
         [Range(0, 23)] // Restrict the range to valid hours
-        public int Hour { get; set; }
+        public int Hour { get; set; } 
         [Required]
         public int TicketId { get; set; }
 

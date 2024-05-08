@@ -163,6 +163,30 @@ namespace Pro1.Controllers
             var employee = await _context.Employee.FindAsync(id);
             if (employee != null)
             {
+                // Delete related Callendar events before deleting the employee
+                var relatedCallendarEvents = await _context.Callendar
+                    .Where(c => c.EmployeeId == id) // Find all events for this employee
+                    .ToListAsync();
+                var relatedTickets = await _context.Ticket
+                .Where(t => t.EmployeeId == id) // Find tickets with this EmployeeId
+                .ToListAsync();
+
+                    // Modify tickets based on their state
+                    foreach (var ticket in relatedTickets)
+                    {
+                        if (ticket.State == "closed" || ticket.State == "done")
+                        {
+                            ticket.EmployeeId = null; // Set EmployeeId to null for closed or done tickets
+                        }
+                        else if (ticket.State == "in progress")
+                        {
+                            ticket.State = "created"; // Change state to created for in-progress tickets
+                            ticket.EmployeeId = null; // Set EmployeeId to null
+                            ticket.EstimatePrice = decimal.Zero;
+                        }
+                    }
+
+                _context.Callendar.RemoveRange(relatedCallendarEvents); // Remove related events
                 _context.Employee.Remove(employee);
             }
 

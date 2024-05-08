@@ -98,7 +98,7 @@ namespace Pro1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Model,Registration,Description,State,EmployeeId,EstimateDescription,EstimatePrice,IsAccepted,PricePaid,State")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Model,Registration,Description,State,EmployeeId,EstimateDescription,EstimatePrice,IsAccepted,PricePaid")] Ticket ticket)
         {
             if (id != ticket.Id)
             {
@@ -126,39 +126,6 @@ namespace Pro1.Controllers
                 return RedirectToAction(nameof(MyTickets));
             }
             return View(ticket);
-        }
-
-        // GET: Tickets/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var ticket = await _context.Ticket
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-
-            return View(ticket);
-        }
-
-        // POST: Tickets/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var ticket = await _context.Ticket.FindAsync(id);
-            if (ticket != null)
-            {
-                _context.Ticket.Remove(ticket);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool TicketExists(int id)
@@ -202,7 +169,7 @@ namespace Pro1.Controllers
             }
 
             var unassignedTickets = await _context.Ticket
-                .Where(t => t.EmployeeId == null) // Get tickets without an EmployeeId
+                .Where(t => t.State == "created") // Get tickets without an EmployeeId
                 .ToListAsync();
 
             return View(unassignedTickets); // Pass unassigned tickets to the view
