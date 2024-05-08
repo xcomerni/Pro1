@@ -53,15 +53,16 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EmployeeId)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.EstimateDescription)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EstimatePrice)
             </td>
+            <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> <!-- New Details link -->
+            </td>
         </tr>
 }
     </tbody>
 </table>
+

@@ -45,9 +45,18 @@ namespace Pro1.Controllers
             var parts = await _context.Parts
                 .Where(p => p.TicketId == id)
                 .ToListAsync();
-            
 
-            ViewBag.Parts = parts; // Ensure this is a list of Parts
+            // Fetch the Employee based on the EmployeeId from the Ticket
+            Employee? employee = null;
+            if (ticket.EmployeeId.HasValue) // Check if the EmployeeId is set
+            {
+                employee = await _context.Employee
+                    .FirstOrDefaultAsync(e => e.Id == ticket.EmployeeId.Value); // Fetch the Employee
+            }
+
+            // Pass the Ticket, Employee, and Parts to the view
+            ViewBag.EmployeeName = employee?.Name;
+            ViewBag.Parts = parts;
 
             return View(ticket); // Pass the ticket and parts to the view
         }

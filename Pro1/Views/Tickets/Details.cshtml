@@ -1,7 +1,10 @@
 ﻿@model Pro1.Models.Ticket
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Details";
+    var session = HttpContextAccessor.HttpContext?.Session;
+    var isAdmin = session?.GetInt32("IsAdmin") ?? 0;
 }
 
 <h1>Details</h1>
@@ -46,6 +49,18 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.EstimatePrice)
         </dd>
+        <dt class="col-sm-2">Is Accepted?</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.IsAccepted)</dd> <!-- Display if ticket is accepted -->
+
+        <dt class="col-sm-2">State</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.State)</dd> <!-- Display ticket's state -->
+
+        <dt class="col-sm-2">Price Paid</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.PricePaid)</dd> <!-- Display amount paid -->
+
+        <dt class="col-sm-2">Assigned Employee:</dt>
+        <dd class="col-sm-10">@ViewBag.EmployeeName</dd> <!-- Display the Employee's name -->
+
         <dt class="col-sm-2">Parts</dt>
         <dd class="col-sm-10">
             @{
@@ -84,6 +99,14 @@
         </dd>
     </dl>
 </div>
+@if(isAdmin == 0){
 <div>
     <a asp-action="MyTickets">Back to List</a>
 </div>
+}
+@if (isAdmin == 1)
+{
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+}
