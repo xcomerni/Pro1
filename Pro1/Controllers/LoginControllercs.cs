@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pro1.Data;
@@ -17,6 +18,8 @@ namespace Pro1.Controllers
 
         public IActionResult Index()
         {
+            HttpContext.Session.SetInt32("IsAdmin", 0);
+            HttpContext.Session.SetString("LoggedInUser", "null");
             return View(new Login()); // Ensure the view has a model instance
         }
 

@@ -17,30 +17,6 @@ namespace Pro1.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> MyCallendar()
-        {
-            var loggedInUser = HttpContext.Session.GetString("LoggedInUser");
-
-            if (string.IsNullOrEmpty(loggedInUser))
-            {
-                return RedirectToAction("Index", "Login"); // Redirect to login if no user is logged in
-            }
-
-            // Get the EmployeeId for the logged-in user
-            var userLogin = await _context.Login.FirstOrDefaultAsync(l => l.Username == loggedInUser);
-
-            if (userLogin == null)
-            {
-                return RedirectToAction("Index", "Login");
-            }
-
-            // Retrieve all Callendar records for this EmployeeId
-            var myCallendar = await _context.Callendar
-                .Where(c => c.EmployeeId == userLogin.EmployeeId)
-                .ToListAsync();
-
-            return View(myCallendar); // Pass the Callendar records to the view
-        }
         public IActionResult EmployeeCalendar() // This action returns the view for the employee calendar
         {
             return View(); // Return the view for the calendar
