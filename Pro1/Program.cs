@@ -6,11 +6,16 @@ builder.Services.AddDbContext<Pro1Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Pro1Context") ?? throw new InvalidOperationException("Connection string 'Pro1Context' not found.")));
 
 // Add session services
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust session timeout
+    options.Cookie.HttpOnly = true; // Secure session cookie
+    options.Cookie.IsEssential = true; // Required for GDPR compliance
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,9 +28,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
-app.UseRouting();
 app.UseSession(); // Enable session handling
+app.UseRouting();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
