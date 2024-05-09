@@ -56,8 +56,10 @@ else
                     <td>
                         <a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-secondary">Details</a>
                         <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-primary">Edit</a>
-                        <a asp-action="AddHour" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-primary">Add Hour</a>
-                        <a asp-action="Create" asp-controller="Parts" asp-route-ticketId="@ticket.Id" class="btn btn-primary">Add Part</a>
+                        @if(ticket.State != "closed"){
+                            <a asp-action="AddHour" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-primary">Add Hour</a>
+                            <a asp-action="Create" asp-controller="Parts" asp-route-ticketId="@ticket.Id" class="btn btn-primary">Add Part</a>
+						}
 					</td>
                 </tr>
             }

@@ -38,19 +38,24 @@ namespace Pro1.Controllers
                 return Forbid(); // If no valid login, return forbidden
             }
 
-            // Retrieve calendar events for the logged-in employee
-            var events = await _context.Callendar
-                .Where(c => c.EmployeeId == userLogin.EmployeeId) // Ensure you're getting the correct events
-                .Select(c => new
-                {
-                    id = c.Id,
-                    title = $"Ticket {c.TicketId}", // Customize the title for FullCalendar
-                    start = c.Date, // Start time for the event
-                    allDay = false // Specify if it's an all-day event
-                })
-                .ToListAsync(); // Return the list of events
+			// Join Callendar with Ticket to get Registration
+			var events = await _context.Callendar
+				.Where(c => c.EmployeeId == userLogin.EmployeeId) // Get events for the logged-in employee
+				.Join(
+					_context.Ticket, // Join with Ticket
+					callendar => callendar.TicketId, // On the Callendar's TicketId
+					ticket => ticket.Id, // With the Ticket's Id
+					(callendar, ticket) => new
+					{
+						id = callendar.Id,
+						title = $"Ticket {ticket.Registration}", // Use the Registration for the title
+						start = callendar.Date, // Start time for the event
+						allDay = false // Specify if it's an all-day event
+					}
+				)
+				.ToListAsync(); // Return the list of events
 
-            return Json(events); // Return the events as JSON for FullCalendar
+			return Json(events); // Return the events as JSON for FullCalendar
         }
 
         public IActionResult Calendar() // This action returns the view for the employee calendar
