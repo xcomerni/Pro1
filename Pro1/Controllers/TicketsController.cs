@@ -218,7 +218,7 @@ namespace Pro1.Controllers
 
                 // Calculate the new estimate price
                 var newEstimatePrice = (ticket.TimeSlots) * employee.Rate; // Calculate the new estimate price
-                ticket.EstimatePrice = newEstimatePrice; // Update the estimate price
+                ticket.EstimatePrice = ticket.EstimatePrice + newEstimatePrice; // Update the estimate price
 
                 await _context.SaveChangesAsync();
             }

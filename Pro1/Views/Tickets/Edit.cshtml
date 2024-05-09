@@ -54,8 +54,16 @@
             </div>
             <label asp-for="State" class="control-label">Ticket Status</label>
             <select asp-for="State" class="form-control">
-                <option value="done">done</option>
+                @if (!string.IsNullOrEmpty(Model.State) && !Model.State.Equals("closed") && !Model.State.Equals("done"))
+                {
+                    <option value="@Model.State">@Model.State</option> <!-- Include current state if it's not among the predefined ones -->
+                }
+                @if (!Model.State.Equals("closed"))
+                {
+					<option value="done">done</option>
+				}
                 <option value="closed">closed</option>
+
             </select>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
