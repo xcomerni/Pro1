@@ -185,6 +185,12 @@ namespace Pro1.Controllers
                             ticket.EstimatePrice = ticket.EstimatePrice - (ticket.TimeSlots*employee.Rate);
                         }
                     }
+                // Find the corresponding login and delete it
+                var login = await _context.Login.FirstOrDefaultAsync(l => l.EmployeeId == id);
+                if (login != null)
+                {
+                    _context.Login.Remove(login); // Delete the login
+                }
 
                 _context.Callendar.RemoveRange(relatedCallendarEvents); // Remove related events
                 _context.Employee.Remove(employee);
