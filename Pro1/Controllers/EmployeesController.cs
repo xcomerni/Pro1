@@ -182,7 +182,7 @@ namespace Pro1.Controllers
                         {
                             ticket.State = "created"; // Change state to created for in-progress tickets
                             ticket.EmployeeId = null; // Set EmployeeId to null
-                            ticket.EstimatePrice = decimal.Zero;
+                            ticket.EstimatePrice = ticket.EstimatePrice - (ticket.TimeSlots*employee.Rate);
                         }
                     }
 

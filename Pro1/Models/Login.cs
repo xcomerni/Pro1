@@ -12,7 +12,6 @@ namespace Pro1.Models
         [Required]
         public string Password { get; set; }
         [Required]
-        [ForeignKey("Employee")]
         public int EmployeeId { get; set; }
         public bool IsAdmin { get; set; }
 

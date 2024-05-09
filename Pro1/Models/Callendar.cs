@@ -11,7 +11,6 @@ namespace Pro1.Models
         [Required]
         public DateTime Date { get; set; } = DateTime.Today;// The date of the calendar event
         [Required]
-        [ForeignKey("Employee")] // Reference to the Employee model
         public int EmployeeId { get; set; }
 
         [Required]

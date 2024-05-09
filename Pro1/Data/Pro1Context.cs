@@ -14,6 +14,7 @@ namespace Pro1.Data
         public Pro1Context (DbContextOptions<Pro1Context> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<Employee> Employee { get; set; } = default!;

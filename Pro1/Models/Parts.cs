@@ -10,7 +10,6 @@ namespace Pro1.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        [ForeignKey("Ticket")]
         public int TicketId { get; set; }
         [Required]
         public decimal unitPrice { get; set; }
